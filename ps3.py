@@ -165,6 +165,8 @@ def part_3(df, n_labels):
 
 
 def part_4(df):
+    util.neuralNetwork(df)
+
     # standardization
     df_scaled = util.standardize(df[0])
 
@@ -173,7 +175,7 @@ def part_4(df):
     util.neuralNetwork((data_transform, df[1]))
 
     # ICA
-    data_transform = util.ica(df_scaled)
+    data_transform = util.ica(df_scaled, plot=False)
     util.neuralNetwork((data_transform, df[1]))
 
     # RP

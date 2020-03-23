@@ -12,13 +12,14 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics.pairwise import pairwise_distances
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import scipy.sparse as sps
 from scipy.linalg import pinv
-from sklearn.metrics.pairwise import pairwise_distances
+import time
 
 def standardize(data):
     scaler = StandardScaler()
@@ -96,7 +97,7 @@ def pca(data, thr_var=0.9, plot=True):
     return(pca.transform(data), pca.explained_variance_ratio_)
 
 
-def ica(data, plot=True):
+def ica(data, plot=True, n_components=10):
     if plot:
         dims = range(1, data.shape[1]+1)
         kurt = []
@@ -116,7 +117,9 @@ def ica(data, plot=True):
         plt.grid(False)
         plt.show()
 
-    ica = FastICA(n_components=data.shape[1], max_iter=10000, random_state=1).fit(data)
+        ica = FastICA(n_components=data.shape[1], max_iter=10000, random_state=1).fit(data)
+    else:
+        ica = FastICA(n_components=n_components, max_iter=10000, random_state=1).fit(data)
 
     return(ica.transform(data))
 
@@ -194,6 +197,9 @@ def RFPlot(df_imp, df_acc):
 
 
 def neuralNetwork(data):
+    tic = time.process_time()
+    print(data[0].shape)
+
     # train with various training size
     train_size = [0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8]
     train_scores, test_scores = [], []
@@ -222,6 +228,9 @@ def neuralNetwork(data):
     ax.plot(train_size, test_scores, marker='o', label="test")
     ax.legend()
     plt.show()
+
+    toc = time.process_time()
+    print(toc - tic, 's')
 
     print(max(test_scores))
 
